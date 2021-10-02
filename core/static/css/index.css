@@ -5,7 +5,7 @@
 
 #sidebar-container {
     max-height: 100%;
-    background-color: #007bff;
+    background-color: #5d4366;
     ;
     padding: 0;
 }
@@ -38,19 +38,19 @@
 
 /* Separators */
 .sidebar-separator-title {
-    background-color: #007bff;
+    background-color: #5d4366;
     ;
     height: 35px;
 }
 
 .sidebar-separator {
-    background-color: #007bff;
+    background-color: #5d4366;
     ;
     height: 25px;
 }
 
 .logo-separator {
-    background-color: #007bff;
+    background-color: #5d4366;
     ;
     height: 60px;
 }
@@ -141,4 +141,12 @@
 }
 .ui-table-reflow .ui-table-cell-label {
     display: none;
+}
+
+.seta{
+    background-color: #5d4366;
+}
+
+.seta:hover{
+    color: #ff6e01 !important;
 }

@@ -1,11 +1,10 @@
 {% load static %}
 <script type="text/javascript" src="{% static 'js/index.js'%}"></script>
 <div style="width: 100%;height: 100vh;position: relative;">
-  <nav class="navbar navbar-light" style="background-color: #09446e; width: 100%;height: 70px; position: static;">
-    <div class="navbar-header ml-5">
+  <nav class="navbar navbar-light" style="background-color: #ff6e01; width: 100%;height: 70px; position: static;">
+    <span id="button-menu" class="fas fa-bars btn btn-default" role="button"></span>
+    <div class="navbar-header">
       <span onclick="location.reload();"><img src="{% static 'img/capivara.png' %}" height="60"></span>
-      {% comment %} <span onclick="location.reload();"><img src="{% static 'img/price_nome.png' %}" height="50"></span>
-      {% endcomment %}
     </div>
     <button onclick="deslogar()" class="btn btn-outline-warning my-2 my-sm-0">Sair</button>
   </nav>
@@ -27,7 +26,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modal_title">Gapp PriceKey</h5>
+        <h5 class="modal-title" id="modal_title">Meu Sol</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

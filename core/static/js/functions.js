@@ -18,11 +18,11 @@ function chamaPage(path, conteiner) {
 
 function alertas(text = null, title = null) {
   if (!title) {
-    title = "Ial Previsões do Tempo";
+    title = "Previsões do Tempo";
   }
 
   if (!text) {
-    text = "Ial Previsões do Tempo";
+    text = "Previsões do Tempo";
   }
   // $("#modal_msg").modal("show");
   BootstrapDialog.show({

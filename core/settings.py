@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import os
+import django_heroku
 
 from api.loggers.logs import loggers
 
@@ -8,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'x0w_*#ozu%juk9v&w$el5i__ovdh^5i2ix7&xtu6+!s3^**0u('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -150,8 +151,5 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = ['*']
 
-chave_preco = {}
-chave_preco['chave_preco'] = None
-chave_preco['preco_default'] = None
-chave_preco['state_cbc'] = None
-chave_preco['state_chave_preco'] = None
+# Ative Django-Heroku.
+django_heroku.settings(locals())
