@@ -73,6 +73,17 @@
                       />
                     </div>
                   </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Custo (KWh)</label>
+                      <input
+                        class="form-control"
+                        id="irradiance_custo"
+                        value="0.05"
+                        type="text"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div class="row">
                   <div class="col-sm-4">
@@ -134,15 +145,7 @@
             </div>
           </div>
         </div>
-        <div class="card-footer">
-          <button
-            id="btn_salvar"
-            class="btn btn-primary"
-            onclick="downloadPDF('canvas_dia2','Irradiação Diaria')"
-          >
-            Baixar
-          </button>
-        </div>
+        <br/>
         <div class="row justify-content-md-center">
           <div class="col-sm-8 col-md-8">
             <div class="card shadow">
@@ -156,19 +159,41 @@
             </div>
           </div>
         </div>
-        <div class="card-footer">
-          <button
-            id="btn_salvar"
-            class="btn btn-primary"
-            onclick="downloadPDF('canvas_dia_watts2','Produção Diaria')"
-          >
-            Baixar
-          </button>
+        <br/>
+        <div class="row justify-content-md-center">
+          <div class="col-sm-8 col-md-8">
+            <div class="card shadow">
+              <div class="card-body">
+                <div class="chart-area">
+                  <div style="width: 100%">
+                    <canvas id="canvas_ano"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        <br/>
+        <div class="row justify-content-md-center">
+          <div class="col-sm-8 col-md-8">
+            <div class="card shadow">
+              <div class="card-body">
+                <div class="chart-area">
+                  <div style="width: 100%">
+                    <canvas id="canvas_ano_watts"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br/>
         <div id="div_table"></div>
       </div>
     </section>
   </div>
 </div>
-<canvas id="canvas_dia2" hidden></canvas>
-<canvas id="canvas_dia_watts2" hidden></canvas>
+<canvas id="canvas_dia2" hidden height="1000px" width="1000px"></canvas>
+<canvas id="canvas_dia_watts2" hidden height="1000px" width="1000px"></canvas>
+<canvas id="canvas_ano2" hidden height="1000px" width="1000px"></canvas>
+<canvas id="canvas_ano_watts2" hidden height="1000px" width="1000px"></canvas>

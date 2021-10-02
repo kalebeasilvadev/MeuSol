@@ -1,48 +1,79 @@
 {% load static %}
-<script src="{% static 'pages/previsao/previsao.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+<script
+  src="{% static 'pages/previsao/previsao.js' %}"
+  type="text/javascript"
+  charset="utf-8"
+  async
+  defer
+></script>
 <div id="form-banco">
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item active">Previsao do tempo</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="content">
-            <div class="container-fluid">
+  <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active">Previsao do tempo</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Previsao do tempo</h3>
+              </div>
+              <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Previsao do tempo</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Cidade</label>
-                                            <input type="text" class="form-control" id="previsao_cidade" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button id="btn_salvar" class="btn btn-primary" onclick="busca()">
-                                    Buscar
-                                </button>
-                            </div>
-                        </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Latidude</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="irradiance_latitude"
+                      />
                     </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Longitude</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="irradiance_longitude"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <br>
-                <div id='dadosPrevisaoCidade' class="row"></div>
-                <div id='dadosPrevisao' class="row"></div>
+              </div>
+              <div class="card-footer">
+                <button
+                  id="btn_salvar"
+                  class="btn btn-primary"
+                  onclick="busca()"
+                >
+                  Buscar
+                </button>
+                <button
+                  id="btn_salvar"
+                  class="btn btn-primary"
+                  onclick="pegaLoc()"
+                >
+                  Usar Localização
+                </button>
+              </div>
             </div>
-        </section>
-    </div>
+          </div>
+        </div>
+        <br />
+        <div id="dadosPrevisaoCidade" class="row"></div>
+        <div id="dadosPrevisao" class="row"></div>
+      </div>
+    </section>
+  </div>
 </div>

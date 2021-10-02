@@ -143,7 +143,7 @@ function downloadPDF(grafico, nome) {
     }
   });
   var pdf = new jsPDF("l", "pt");
-  pdf.addImage(fullQuality, "PNG", 0, 0);
+  pdf.addImage(fullQuality, "PNG", 0, 0,['1000px','1000px']);
 
   pdf.save(`${nome}.pdf`);
 }
@@ -204,4 +204,28 @@ function graficoDash(
       },
     },
   };
+}
+
+
+function do_something(coords) {
+  $("#irradiance_latitude").val(coords.latitude);
+  $("#irradiance_longitude").val(coords.longitude);
+}
+
+function pegaLoc() {
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      do_something(position.coords);
+    },
+    function (failure) {
+      $.getJSON("https://ipinfo.io/geo", function (response) {
+        var loc = response.loc.split(",");
+        var coords = {
+          latitude: loc[0],
+          longitude: loc[1],
+        };
+        do_something(coords);
+      });
+    }
+  );
 }

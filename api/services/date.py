@@ -52,3 +52,12 @@ class trataData():
         else:
             self.fim_dia = fim.strftime("%Y%m%d")
             self.inicio_dia = self.data.strftime("%Y%m%d")
+
+    def somaAno(self, periodo):
+        day = self.data.day
+        inicio_mes = self.data - timedelta(days=int(day - 1))
+        fim = (inicio_mes + relativedelta(months=+1)) - timedelta(days=1)
+        inicio_mes_ano = inicio_mes - relativedelta(years=int(periodo))
+        fim_mes_ano = fim - relativedelta(years=int(periodo))
+        self.inicio_mes_ano = inicio_mes_ano.strftime("%Y-%m-%d")
+        self.fim_mes_ano = fim_mes_ano.strftime("%Y-%m-%d")

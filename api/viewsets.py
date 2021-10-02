@@ -49,21 +49,24 @@ class BuscaPrevisao(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         dados = obj(request.data)
         CHAVE = "b9e1d7b5ce0e14873b69f59f7facdd3d"
-        CIDADE = dados.cidade
-        URL = f"http://api.openweathermap.org/data/2.5/forecast?q={CIDADE}&appid={CHAVE}&units=metric&lang=pt_br"
+        lat = dados.latitude
+        lon = dados.longitude
+        URL = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={CHAVE}&units=metric&lang=pt_br"
+        # URL = f"http://api.openweathermap.org/data/2.5/forecast?q={CIDADE}&appid={CHAVE}&units=metric&lang=pt_br"
 
         result = requests.get(URL)
         jsonDados = str(result.json())
         saida = result.json()
+        dados = obj(result.json())
         pre = ""
         dataBusca = datetime.now()
         dataBusca = datetime.strftime(dataBusca, '%d/%m/%Y as %H:%M:%S')
-        if obj(result.json()).cod == '200':
-            Historico(cidade=CIDADE, jsonDados=jsonDados).save()
+        if dados.cod == '200':
+            Historico(cidade=dados.city.name, jsonDados=jsonDados).save()
             pre = {
                 "dadosPrevisao": preparaSaida(saida),
                 "data": dataBusca,
-                "cidade": CIDADE,
+                "cidade": dados.city.name,
             }
 
         return Response(pre)
@@ -73,12 +76,14 @@ class BuscaIrradience(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         dados = obj(request.data)
         potencia = float(dados.potencia)
-        perda = float(dados.perda)/100
+        perda = float(dados.perda) / 100
+        custo = float(dados.custo)
         date = trataData(datetime.now(), format=False)
         inicio_semana = date.inicio_semana
         fim_semana = date.fim_semana
         inicio = 0
         fim = 0
+
         if dados.inicio != "" and dados.fim != "":
             fim = datetime.strptime(dados.fim, "%Y-%m-%d").strftime("%Y%m%d")
             inicio = datetime.strptime(
@@ -108,7 +113,6 @@ class BuscaIrradience(viewsets.ModelViewSet):
 
         for key in irradienceData:
             if irradienceData[key] > 0:
-                dataKey = f'{key[6::]}/{key[4:6]}/{key[0:4]}'
                 dia = key[6::]
                 mes = key[4:6]
                 ano = key[0:4]
@@ -120,24 +124,41 @@ class BuscaIrradience(viewsets.ModelViewSet):
             lambda x: CalculadorSolar(
                 x['irradiance'], potencia, perda).diario(), axis=1)
         dt['total'] = dt['energy'].sum()
+        dt['custo'] = round(dt['energy'] * custo, 2)
+        dt['custoTotal'] = round(dt['custo'].sum(), 2)
+
         dt2 = dt.rename(columns={
             'time': 'Dias',
             'irradiance': 'Irradiação',
-            'energy': 'Potencial Energético'
+            'energy': 'Potencial Energético',
+            'total': 'Potencial Energético mensal',
+            'custo': 'Crédito (R$)',
+            'custoTotal': 'Crédito mensal (R$)',
         })
+
         html = dt2.to_html(classes='table compact responsive',
-                                                 table_id='table_relatorio',
-                                                 sparsify=False, index=False)
+                           table_id='table_relatorio',
+                           sparsify=False, index=False)
+
         html = html.replace("dataframe ", "").\
             replace('style="text-align: right;"', "").\
             replace('border="1"', "").\
             replace('id="table_relatorio"', 'id="table_relatorio" style="width:100%"').\
             replace('.', ',')
+            
+        dadosAnos = BuscaDadosAnos(
+            dados.latitude,
+            dados.longitude,
+            dados.inicio,
+            potencia,
+            perda)
+
         resposta = {
             'dados': dt.to_dict(),
             'mes': mes,
             'ano': ano,
-            'html':html,
+            'html': html,
+            'dadosAnos': dadosAnos
         }
         return Response(resposta)
 
@@ -196,3 +217,39 @@ class UserViewSet(viewsets.ModelViewSet):
             "nivel": request.data['nivel'],
         }
         return Response(data)
+
+
+def BuscaDadosAnos(latitude, longitude, data, potencia, perda):
+    date = trataData(data, format=False)
+    irradience = []
+    energy = []
+    for x in range(5):
+        date.somaAno(x)
+        inicio = date.inicio_mes_ano.replace('-', '')
+        fim = date.fim_mes_ano.replace('-', '')
+        base_url = f"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN,CLRSKY_SFC_SW_DWN,ALLSKY_KT,ALLSKY_NKT,ALLSKY_SFC_LW_DWN,ALLSKY_SFC_PAR_TOT,CLRSKY_SFC_PAR_TOT,ALLSKY_SFC_UVA,ALLSKY_SFC_UVB,ALLSKY_SFC_UV_INDEX&community=RE&longitude={longitude}&latitude={latitude}&start={inicio}&end={fim}&format=JSON"
+
+        response = requests.get(
+            url=base_url,
+            verify=True,
+            timeout=30.00)
+
+        content = json.loads(response.content.decode('utf-8'))
+        if not content.get('properties'):
+            pass
+
+        irradienceData = content['properties']['parameter']['ALLSKY_SFC_SW_DWN']
+        total = 0
+        totalPotencia = 0
+        for key in irradienceData:
+            if irradienceData[key] > 0:
+                total += irradienceData[key]
+                valor = CalculadorSolar(
+                    irradienceData[key], potencia, perda).diario()
+                totalPotencia += valor
+
+        ano = inicio[0:4]
+        irradience.append({'ano':ano, 'valor': round(total,2)})
+        energy.append({'ano':ano, 'valor': round(totalPotencia,2)})
+
+    return {'irradience': irradience, 'energy': energy}

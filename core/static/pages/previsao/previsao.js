@@ -1,14 +1,18 @@
 function busca() {
-    cidade = $("#previsao_cidade").val();
+    let latitude = $("#irradiance_latitude").val();
+    let longitude = $("#irradiance_longitude").val();
 
     data = http.request({
         metodo: "POST",
         path: "api/buscaprevisao/",
-        data: { cidade: cidade },
+        data: { 
+            latitude: latitude,
+            longitude: longitude,
+        },
     });
     if (data?.status == "success") {
         dados = data.data;
-        console.log(dados)
+
         if ( dados != "") {
             $("#dadosPrevisao").html("");
             $("#dadosPrevisaoCidade").html("").append(`
@@ -17,7 +21,7 @@ function busca() {
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-12">
                                         <div class="text-xs font-weight-bold text-primary mb-1">
-                                            ${cidade} Previsão dos próximos 5 dias</div>
+                                            ${dados.cidade} Previsão dos próximos 5 dias</div>
                                     </div>
                                 </div>
                             </div>

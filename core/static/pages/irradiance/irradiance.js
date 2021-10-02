@@ -5,6 +5,7 @@ function busca() {
   let fim = $("#irradiance_fim").val();
   let potencia = $("#irradiance_potencia").val();
   let perda = $("#irradiance_perda").val();
+  let custo = $("#irradiance_custo").val();
 
   data = http.request({
     metodo: "POST",
@@ -16,10 +17,12 @@ function busca() {
       fim: fim,
       potencia: potencia,
       perda: perda,
+      custo: custo,
     },
   });
   if (data?.status == "success") {    
     $("#div_table").empty().append(data.data.html);
+    dadosAnos = data.data.dadosAnos;
     dados = data.data.dados;
     ano = data.data.ano;
     mes = data.data.mes;
@@ -69,12 +72,57 @@ function busca() {
     $("#canvas_dia_watts2").html("");
     window.dia_watts2 = new Chart(ctx, config_dia_watts);
 
+    dataAno = [];
+    irradianceAno = [];
+    energyAno = [];
+
+    for (key in dadosAnos.irradience) {
+      dataAno.push(dadosAnos.irradience[key].ano);
+      irradianceAno.push(dadosAnos.irradience[key].valor);
+      energyAno.push(dadosAnos.energy[key].valor);
+    }
+
+    config_ano = graficoDash(
+      dataAno,
+      `Produção mensal ${mes}`,
+      irradianceAno,
+      `Níveis de radiação solar ultimos 5 anos para o mes ${mes}`,
+      "Dia",
+      "Produção diaria",
+      (type = "bar")
+    );
+
+    var ctx = document.getElementById("canvas_ano").getContext("2d");
+    $("#canvas_ano").html("");
+    window.ano = new Chart(ctx, config_ano);
+
+    var ctx = document.getElementById("canvas_ano2").getContext("2d");
+    $("#canvas_ano2").html("");
+    window.ano2 = new Chart(ctx, config_ano);
+
+    config_ano_watts2 = graficoDash(
+      dataAno,
+      `Produção mensal ${mes}`,
+      energyAno,
+      `Produção mensal dos ultimos 5 anos para o mes ${mes}`,
+      "Dia",
+      "Produção diaria",
+      (type = "bar")
+    );
+
+    var ctx = document.getElementById("canvas_ano_watts").getContext("2d");
+    $("#canvas_ano_watts").html("");
+    window.ano_watts = new Chart(ctx, config_ano_watts2);
+
+    var ctx = document.getElementById("canvas_ano_watts2").getContext("2d");
+    $("#canvas_ano_watts2").html("");
+    window.ano_watts2 = new Chart(ctx, config_ano_watts2);
+
     title = `Dados de Irradiação Solar `;
     $("#table_relatorio").DataTable({
       dom: "Bfrtip",
       buttons: [
         { extend: "copyHtml5", footer: true, text: "Copiar" },
-        { extend: "excelHtml5", footer: true },
         {
           extend: "pdfHtml5",
           text: "PDF",
@@ -138,33 +186,6 @@ function busca() {
     });
     $("#graficos").show()
   }
-}
-
-function do_something(coords) {
-  $("#irradiance_latitude").val(coords.latitude);
-  $("#irradiance_longitude").val(coords.longitude);
-}
-function pegaLoc() {
-  navigator.geolocation.getCurrentPosition(
-    function (position) {
-      do_something(position.coords);
-    },
-    function (failure) {
-      $.getJSON("https://ipinfo.io/geo", function (response) {
-        var loc = response.loc.split(",");
-        var coords = {
-          latitude: loc[0],
-          longitude: loc[1],
-        };
-        do_something(coords);
-      });
-    }
-  );
-}
-
-function baixar() {
-  downloadPDF("canvas_dia2");
-  downloadPDF("canvas_dia_watts2");
 }
 
 $(document).ready(function () {
