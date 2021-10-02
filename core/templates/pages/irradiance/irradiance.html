@@ -1,0 +1,174 @@
+{% load static %}
+<script
+  src="{% static 'pages/irradiance/irradiance.js' %}"
+  type="text/javascript"
+  charset="utf-8"
+  async
+  defer
+></script>
+<div id="form-banco">
+  <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active">Irradiação Solar</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Irradiação Solar</h3>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Latidude</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="irradiance_latitude"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Longitude</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="irradiance_longitude"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Potência painel fotovoltaico (W)</label>
+                      <input
+                        class="form-control"
+                        id="irradiance_potencia"
+                        type="text"
+                        value="410"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Perda painel (%)</label>
+                      <input
+                        class="form-control"
+                        id="irradiance_perda"
+                        value="20"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Data Iníco</label>
+                      <input
+                        class="form-control"
+                        value="2020-01-01"
+                        id="irradiance_inicio"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label>Data Fim</label>
+                      <input
+                        class="form-control"
+                        value="2020-01-31"
+                        id="irradiance_fim"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button
+                  id="btn_salvar"
+                  class="btn btn-primary"
+                  onclick="busca()"
+                >
+                  Buscar
+                </button>
+                <button
+                  id="btn_salvar"
+                  class="btn btn-primary"
+                  onclick="pegaLoc()"
+                >
+                  Usar Localização
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br />
+      </div>
+      <div id="graficos">
+        <div class="row justify-content-md-center">
+          <div class="col-sm-8 col-md-8">
+            <div class="card shadow">
+              <div class="card-body">
+                <div class="chart-area">
+                  <div style="width: 100%">
+                    <canvas id="canvas_dia"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button
+            id="btn_salvar"
+            class="btn btn-primary"
+            onclick="downloadPDF('canvas_dia2','Irradiação Diaria')"
+          >
+            Baixar
+          </button>
+        </div>
+        <div class="row justify-content-md-center">
+          <div class="col-sm-8 col-md-8">
+            <div class="card shadow">
+              <div class="card-body">
+                <div class="chart-area">
+                  <div style="width: 100%">
+                    <canvas id="canvas_dia_watts"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button
+            id="btn_salvar"
+            class="btn btn-primary"
+            onclick="downloadPDF('canvas_dia_watts2','Produção Diaria')"
+          >
+            Baixar
+          </button>
+        </div>
+      </div>
+      <div id="div_table"></div>
+    </section>
+  </div>
+</div>
+<canvas id="canvas_dia2" hidden></canvas>
+<canvas id="canvas_dia_watts2" hidden></canvas>

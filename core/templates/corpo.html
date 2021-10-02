@@ -1,0 +1,46 @@
+{% load static %}
+<script type="text/javascript" src="{% static 'js/index.js'%}"></script>
+<div style="width: 100%;height: 100vh;position: relative;">
+  <nav class="navbar navbar-light" style="background-color: #09446e; width: 100%;height: 70px; position: static;">
+    <div class="navbar-header ml-5">
+      <span onclick="location.reload();"><img src="{% static 'img/capivara.png' %}" height="60"></span>
+      {% comment %} <span onclick="location.reload();"><img src="{% static 'img/price_nome.png' %}" height="50"></span>
+      {% endcomment %}
+    </div>
+    <button onclick="deslogar()" class="btn btn-outline-warning my-2 my-sm-0">Sair</button>
+  </nav>
+  <div class="row" id="body-row" style="height: 92.2%;">
+    <div id="index-menu"></div>
+    <div id="sidebar-container" class="d-none d-md-block sidebar-expanded scrollStyle"
+      style="height: auto; position: static; float: left;overflow-y:auto; ">
+      <ul id="lista_menu" class="list-group">
+
+      </ul>
+    </div>
+    <div class="col" id="index-pages" style="height: 100%; position:relative; float: left;overflow-y: auto;">
+
+    </div>
+  </div>
+</div>
+<div id="modal_msg" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_title">Gapp PriceKey</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="modal_text" class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">sair</button>
+        {% comment %} <button type="button" class="btn btn-primary">sim</button> {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
+<input type="hidden" id="verifica_tem_vinculo" value="0">
+<input type="hidden" id="verifica_tem_vinculo_codigo" value="0">

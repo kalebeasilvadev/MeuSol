@@ -1,0 +1,144 @@
+#body-row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#sidebar-container {
+    max-height: 100%;
+    background-color: #007bff;
+    ;
+    padding: 0;
+}
+
+/* Sidebar sizes when expanded and expanded */
+.sidebar-expanded {
+    width: 230px;
+}
+
+.sidebar-collapsed {
+    width: 60px;
+}
+
+/* Menu item*/
+#sidebar-container .list-group a {
+    height: 50px;
+    color: white;
+}
+
+
+/* Submenu item*/
+#sidebar-container .list-group .sidebar-submenu a {
+    height: 45px;
+    padding-left: 30px;
+}
+
+.sidebar-submenu {
+    font-size: 0.9rem;
+}
+
+/* Separators */
+.sidebar-separator-title {
+    background-color: #007bff;
+    ;
+    height: 35px;
+}
+
+.sidebar-separator {
+    background-color: #007bff;
+    ;
+    height: 25px;
+}
+
+.logo-separator {
+    background-color: #007bff;
+    ;
+    height: 60px;
+}
+
+/* Closed submenu icon */
+#sidebar-container .list-group .list-group-item[aria-expanded="false"] .submenu-icon::after {
+    content: " \f0d7";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
+}
+
+/* Opened submenu icon */
+#sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
+    content: " \f0da";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
+}
+
+.scrollStyle::-webkit-scrollbar {
+    width: 0px;
+    background-color: #555;
+}
+
+@media only screen and (max-width: 768px) {
+    #button-menu {
+        display: show;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    #button-menu {
+        display: none;
+    }
+}
+
+.tablesorter-pager .btn-group-sm .btn {
+    font-size: 1.2em; /* make pager arrows more visible */
+}
+
+/* REQUIRED CSS: change your reflow breakpoint here (35em below) */
+@media (max-width: 35em) {
+    .ui-table-reflow td,
+    .ui-table-reflow th {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        float: right;
+        /* if not using the stickyHeaders widget (not the css3 version)
+ * the "!important" flag, and "height: auto" can be removed */
+        width: 100% !important;
+        height: auto !important;
+    }
+    /* reflow widget */
+    .ui-table-reflow tbody td[data-title]:before {
+        color: #469;
+        font-size: 0.9em;
+        content: attr(data-title);
+        float: left;
+        width: 50%;
+        white-space: pre-wrap;
+        text-align: bottom;
+        display: inline-block;
+    }
+    /* reflow2 widget */
+    table.ui-table-reflow
+        .ui-table-cell-label.ui-table-cell-label-top {
+        display: block;
+        padding: 0.4em 0;
+        margin: 0.4em 0;
+        text-transform: uppercase;
+        font-size: 0.9em;
+        font-weight: 400;
+    }
+    table.ui-table-reflow .ui-table-cell-label {
+        padding: 0.4em;
+        min-width: 30%;
+        display: inline-block;
+        margin: -0.4em 1em -0.4em -0.4em;
+    }
+    /* allow toggle of thead */
+    thead.hide-header {
+        display: none;
+    }
+}
+.ui-table-reflow .ui-table-cell-label {
+    display: none;
+}

@@ -1,0 +1,1 @@
+default_app_config = 'token.token_blacklist.apps.TokenBlacklistConfig'

@@ -1,0 +1,11 @@
+#log-tail {
+  height: 100%;  
+  overflow:auto; 
+  white-space: pre;
+  font-family: monospace;
+  background-color: black;
+  color: aliceblue;
+}
+.object-tools {
+  margin-top: 5px;
+}
