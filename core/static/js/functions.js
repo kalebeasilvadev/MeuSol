@@ -56,9 +56,9 @@ function montaCards(item, nomeModal, elm = "") {
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-sm mr-2">
-                                                <div style="font-size:1vw"  class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                <div style="font-size:100%"  class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                     ${key}</div>
-                                                <div style="font-size:0.8vw" class="mb-0 font-weight-bold text-gray-800">Temp: ${value.temp} °C</div>
+                                                <div style="font-size:80%" class="mb-0 font-weight-bold text-gray-800">Temp: ${value.temp} °C</div>
                                                 <div >
                                                     <button onclick='modal("#modal2_${nomeModalDias}")' type="button" class="btn  btn-outline-info btn-sm" >Detalhar</button>
                                                 </div>
@@ -143,10 +143,103 @@ function downloadPDF(grafico, nome) {
     }
   });
   var pdf = new jsPDF("l", "pt");
-  pdf.addImage(fullQuality, "PNG", 0, 0,['1000px','1000px']);
+  pdf.addImage(fullQuality, "PNG", 0, 0, ["1000px", "1000px"]);
 
   pdf.save(`${nome}.pdf`);
 }
+
+const footer = (tooltipItems) => {
+  let sum = 0;
+  console.log("as as da");
+  tooltipItems.forEach(function (tooltipItem) {
+    sum += tooltipItem.parsed.y;
+  });
+  return "Sum: " + sum;
+};
+
+// <block:external:2>
+const getOrCreateTooltip = (chart) => {
+  let tooltipEl = chart.canvas.parentNode.querySelector("div");
+
+  if (!tooltipEl) {
+    tooltipEl = document.createElement("div");
+    tooltipEl.style.background = "rgba(0, 0, 0, 0.7)";
+    tooltipEl.style.borderRadius = "3px";
+    tooltipEl.style.color = "white";
+    tooltipEl.style.opacity = 1;
+    tooltipEl.style.pointerEvents = "none";
+    tooltipEl.style.position = "absolute";
+    tooltipEl.style.transform = "translate(-50%, 0)";
+    tooltipEl.style.transition = "all .1s ease";
+    tooltipEl.style.width = "250px";
+
+    const table = document.createElement("table");
+    table.style.margin = "0px";
+
+    tooltipEl.appendChild(table);
+    chart.canvas.parentNode.appendChild(tooltipEl);
+  }
+
+  return tooltipEl;
+};
+
+const externalTooltipHandler = (context) => {
+  // Tooltip Element
+  const { chart, tooltip } = context;
+
+  const tooltipEl = getOrCreateTooltip(chart);
+
+  // Hide if no tooltip
+  if (tooltip.opacity === 0) {
+    tooltipEl.style.opacity = 0;
+    return;
+  }
+
+  // Set Text
+  if (tooltip.body) {
+    var { humidity, temperature } = chart.config._config.adicional;
+    var labelx = chart.config._config.labelx;
+    var { dataIndex, label, formattedValue, dataset } = tooltip.dataPoints[0]
+
+    const tableRoot = tooltipEl.querySelector("table");
+
+    // Remove old children
+    while (tableRoot.firstChild) {
+      tableRoot.firstChild.remove();
+    }
+
+    // Add new children
+    var html = ''
+    if(temperature){
+      html = `
+        <div class="form-group">
+          <span>${labelx} ${label}</span><br/>
+          <span>${dataset.label} = ${formattedValue}</span><br/>
+          <span>Temperatura = ${temperature[dataIndex]} °C</span><br/>
+          <span>Humidade = ${humidity[dataIndex]} %</span>
+        </div>
+      `;
+    }else{
+      html = `
+        <div class="form-group">
+          <span>${labelx} ${label}</span><br/>
+          <span>${dataset.label} = ${formattedValue}</span><br/>
+        </div>
+      `;
+    }
+    tableRoot.innerHTML = html;
+  }
+
+  const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+
+  // Display, position, and set styles for font
+  tooltipEl.style.opacity = 1;
+  tooltipEl.style.left = positionX + tooltip.caretX + "px";
+  tooltipEl.style.top = positionY + tooltip.caretY + "px";
+  tooltipEl.style.font = tooltip.options.bodyFont.string;
+  tooltipEl.style.padding =
+    tooltip.options.padding + "px " + tooltip.options.padding + "px";
+};
 
 function graficoDash(
   dataLabel = [],
@@ -156,10 +249,13 @@ function graficoDash(
   labelx = "",
   labely = "",
   type = "line",
+  infos = {},
   responsive = true
 ) {
   return {
     type: type,
+    adicional: infos,
+    labelx: labelx,
     data: {
       labels: dataLabel,
       datasets: [
@@ -174,38 +270,20 @@ function graficoDash(
     },
     options: {
       responsive: responsive,
-      title: {
-        display: true,
-        text: text,
-      },
-      tooltips: {
-        mode: "index",
-        intersect: true,
-      },
-      hover: {
-        mode: "nearest",
-        intersect: true,
-      },
-      scales: {
-        x: {
+      plugins: {
+        title: {
           display: true,
-          scaleLabel: {
-            display: true,
-            labelString: labelx,
-          },
+          text: text,
         },
-        y: {
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: labely,
-          },
+        tooltip: {
+          enabled: false,
+          position: "nearest",
+          external: externalTooltipHandler,
         },
       },
     },
   };
 }
-
 
 function do_something(coords) {
   $("#irradiance_latitude").val(coords.latitude);

@@ -97,7 +97,7 @@ class BuscaIrradience(viewsets.ModelViewSet):
             fim = fim_semana
             inicio = inicio_semana
 
-        base_url = f"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN,CLRSKY_SFC_SW_DWN,ALLSKY_KT,ALLSKY_NKT,ALLSKY_SFC_LW_DWN,ALLSKY_SFC_PAR_TOT,CLRSKY_SFC_PAR_TOT,ALLSKY_SFC_UVA,ALLSKY_SFC_UVB,ALLSKY_SFC_UV_INDEX&community=RE&longitude={dados.longitude}&latitude={dados.latitude}&start={inicio}&end={fim}&format=JSON"
+        base_url = f"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=RH2M,T2M,ALLSKY_SFC_SW_DWN&community=RE&longitude={dados.longitude}&latitude={dados.latitude}&start={inicio}&end={fim}&format=JSON"
 
         response = requests.get(
             url=base_url,
@@ -107,6 +107,8 @@ class BuscaIrradience(viewsets.ModelViewSet):
         content = json.loads(response.content.decode('utf-8'))
         tabela = []
         irradienceData = content['properties']['parameter']['ALLSKY_SFC_SW_DWN']
+        tempData = content['properties']['parameter']['T2M']
+        humidityData = content['properties']['parameter']['RH2M']
 
         ano = 0
         mes = 0
@@ -116,14 +118,20 @@ class BuscaIrradience(viewsets.ModelViewSet):
                 dia = key[6::]
                 mes = key[4:6]
                 ano = key[0:4]
-                tabela.append((dia, irradienceData[key]))
+                tabela.append(
+                    (dia, irradienceData[key], tempData[key], humidityData[key]))
 
         dt = pd.DataFrame(tabela)
-        dt = dt.rename(columns={0: 'time', 1: 'irradiance'})
+        dt = dt.rename(columns={
+            0: 'time', 
+            1: 'irradiance',
+            2: 'temperature',
+            3: 'humidity'
+            })
         dt['energy'] = dt.apply(
             lambda x: CalculadorSolar(
                 x['irradiance'], potencia, perda).diario(), axis=1)
-        dt['total'] = dt['energy'].sum()
+        dt['total'] = round(dt['energy'].sum(), 2)
         dt['custo'] = round(dt['energy'] * custo, 2)
         dt['custoTotal'] = round(dt['custo'].sum(), 2)
 
@@ -131,6 +139,8 @@ class BuscaIrradience(viewsets.ModelViewSet):
             'time': 'Dias',
             'irradiance': 'Irradiação',
             'energy': 'Potencial Energético',
+            'temperature': 'Temp (°C)',
+            'humidity': 'Humidade Relativa',
             'total': 'Potencial Energético mensal',
             'custo': 'Crédito (R$)',
             'custoTotal': 'Crédito mensal (R$)',
@@ -143,9 +153,10 @@ class BuscaIrradience(viewsets.ModelViewSet):
         html = html.replace("dataframe ", "").\
             replace('style="text-align: right;"', "").\
             replace('border="1"', "").\
-            replace('id="table_relatorio"', 'id="table_relatorio" style="width:100%"').\
-            replace('.', ',')
-            
+            replace(
+            'id="table_relatorio"',
+            'id="table_relatorio" style="width:100%"')
+
         dadosAnos = BuscaDadosAnos(
             dados.latitude,
             dados.longitude,
@@ -227,7 +238,7 @@ def BuscaDadosAnos(latitude, longitude, data, potencia, perda):
         date.somaAno(x)
         inicio = date.inicio_mes_ano.replace('-', '')
         fim = date.fim_mes_ano.replace('-', '')
-        base_url = f"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN,CLRSKY_SFC_SW_DWN,ALLSKY_KT,ALLSKY_NKT,ALLSKY_SFC_LW_DWN,ALLSKY_SFC_PAR_TOT,CLRSKY_SFC_PAR_TOT,ALLSKY_SFC_UVA,ALLSKY_SFC_UVB,ALLSKY_SFC_UV_INDEX&community=RE&longitude={longitude}&latitude={latitude}&start={inicio}&end={fim}&format=JSON"
+        base_url = f"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={longitude}&latitude={latitude}&start={inicio}&end={fim}&format=JSON"
 
         response = requests.get(
             url=base_url,
@@ -249,7 +260,7 @@ def BuscaDadosAnos(latitude, longitude, data, potencia, perda):
                 totalPotencia += valor
 
         ano = inicio[0:4]
-        irradience.append({'ano':ano, 'valor': round(total,2)})
-        energy.append({'ano':ano, 'valor': round(totalPotencia,2)})
+        irradience.append({'ano': ano, 'valor': round(total, 2)})
+        energy.append({'ano': ano, 'valor': round(totalPotencia, 2)})
 
     return {'irradience': irradience, 'energy': energy}

@@ -7,8 +7,8 @@
                     data-toggle="collapse"
                     aria-expanded="false"
                     onclick="chamaPage('irradiance/irradiance.html','#index-pages')"
-                    class="list-group-item list-group-item-action seta"
-                    ><div class="d-flex align-items-center text-white">
+                    class="list-group-item seta"
+                    ><div class="d-flex align-items-center text-white p-2 rounded">
                         <span class="fas fa-sun mr-3"></span
                         ><span class="menu-collapsed texto-menu"
                             >Irradiação Solar</span
@@ -25,8 +25,8 @@
                     data-toggle="collapse"
                     aria-expanded="false"
                     onclick="chamaPage('previsao/previsao.html','#index-pages')"
-                    class="list-group-item list-group-item-action seta"
-                    ><div class="d-flex align-items-center text-white">
+                    class="list-group-item seta"
+                    ><div class="d-flex align-items-center text-white p-2 rounded">
                         <span class="fas fa-sun mr-3"></span
                         ><span class="menu-collapsed texto-menu"
                             >Previsao do Tempo</span
@@ -43,8 +43,8 @@
                 data-toggle="collapse"
                 aria-expanded="false"
                 onclick="chamaPage('historico/historico.html','#index-pages')"
-                class="list-group-item list-group-item-action seta"
-                ><div class="d-flex align-items-center text-white">
+                class="list-group-item seta"
+                ><div class="d-flex align-items-center text-white p-2 rounded">
                     <span class="fas fa-list mr-3"></span
                     ><span class="menu-collapsed texto-menu">Historico</span>
                 </div></span

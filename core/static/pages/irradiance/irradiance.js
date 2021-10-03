@@ -7,6 +7,15 @@ function busca() {
   let perda = $("#irradiance_perda").val();
   let custo = $("#irradiance_custo").val();
 
+  const date1 = new Date(inicio);
+  const date2 = new Date(fim);
+  const diffTime = Math.abs(date2 - date1);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if(diffDays > 31){
+    alertas("Período maior que 31 dias")
+    return false
+  }
+
   data = http.request({
     metodo: "POST",
     path: "api/irradiance/",
@@ -20,7 +29,7 @@ function busca() {
       custo: custo,
     },
   });
-  if (data?.status == "success") {    
+  if (data?.status == "success") {
     $("#div_table").empty().append(data.data.html);
     dadosAnos = data.data.dadosAnos;
     dados = data.data.dados;
@@ -29,15 +38,18 @@ function busca() {
     data = [];
     irradiance = [];
     energy = [];
+    temperature = [];
+    humidity = [];
 
     for (key in dados.time) {
       data.push(dados.time[key]);
       irradiance.push(dados.irradiance[key]);
       energy.push(dados.energy[key]);
+      temperature.push(dados.temperature[key]);
+      humidity.push(dados.humidity[key]);
     }
-
+    infos = {'humidity': humidity, 'temperature': temperature}
     time = dados.time;
-
     config_dia = graficoDash(
       data,
       "Níveis (kW-hr/m^2) ",
@@ -45,7 +57,8 @@ function busca() {
       `Níveis de radiação solar ${mes}/${ano}`,
       "Dia",
       "Produção diaria",
-      (type = "bar")
+      type = "bar",
+      infos = infos,
     );
     var ctx = document.getElementById("canvas_dia").getContext("2d");
     $("#canvas_dia").html("");
@@ -62,7 +75,8 @@ function busca() {
       `Produção diaria ${mes}/${ano}`,
       "Dia",
       "Produção diaria",
-      (type = "bar")
+      (type = "bar"),
+      infos = infos,
     );
 
     var ctx = document.getElementById("canvas_dia_watts").getContext("2d");
@@ -84,10 +98,10 @@ function busca() {
 
     config_ano = graficoDash(
       dataAno,
-      `Produção mensal ${mes}`,
+      `Produção (kW-hr/m^2)`,
       irradianceAno,
       `Níveis de radiação solar ultimos 5 anos para o mes ${mes}`,
-      "Dia",
+      "Ano",
       "Produção diaria",
       (type = "bar")
     );
@@ -102,10 +116,10 @@ function busca() {
 
     config_ano_watts2 = graficoDash(
       dataAno,
-      `Produção mensal ${mes}`,
+      `Produção (KWh)`,
       energyAno,
       `Produção mensal dos ultimos 5 anos para o mes ${mes}`,
-      "Dia",
+      "Ano",
       "Produção diaria",
       (type = "bar")
     );
@@ -123,6 +137,10 @@ function busca() {
       dom: "Bfrtip",
       buttons: [
         { extend: "copyHtml5", footer: true, text: "Copiar" },
+        {
+          extend: "excelHtml5",
+          footer: true,
+        },
         {
           extend: "pdfHtml5",
           text: "PDF",
@@ -184,7 +202,7 @@ function busca() {
         },
       },
     });
-    $("#graficos").show()
+    $("#graficos").show();
   }
 }
 

@@ -12,7 +12,7 @@ class CalculadorSolar:
         self.perda = float(perda)
 
     def diario(self):
-        return self.irradience * self.potencia * (1 - self.perda)
+        return round(self.irradience * self.potencia * (1 - self.perda), 2)
 
     def diarioUnit(self):
         diario = str(self.diario()).replace('.', ',')
