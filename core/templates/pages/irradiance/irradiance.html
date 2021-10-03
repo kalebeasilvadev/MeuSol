@@ -7,18 +7,7 @@
   defer
 ></script>
 <div id="form-banco">
-  <div class="content-wrapper">
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">Irradiação Solar</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
+  <div class="content-wrapper">    
     <section class="content">
       <div class="container-fluid">
         <div class="row">
@@ -33,9 +22,10 @@
                     <div class="form-group">
                       <label>Latidude</label>
                       <input
-                        type="text"
+                        type="number"
                         class="form-control"
                         id="irradiance_latitude"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -43,9 +33,10 @@
                     <div class="form-group">
                       <label>Longitude</label>
                       <input
-                        type="text"
+                        type="number"
                         class="form-control"
                         id="irradiance_longitude"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -59,6 +50,7 @@
                         value="2020-01-01"
                         id="irradiance_inicio"
                         type="date"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -70,6 +62,7 @@
                         value="2020-01-31"
                         id="irradiance_fim"
                         type="date"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -89,8 +82,9 @@
                       <input
                         class="form-control"
                         id="irradiance_potencia"
-                        type="text"
+                        type="number"
                         value="410"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -101,7 +95,8 @@
                         class="form-control"
                         id="irradiance_perda"
                         value="5"
-                        type="text"
+                        type="number"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -112,7 +107,8 @@
                         class="form-control"
                         id="irradiance_custo"
                         value="0.05"
-                        type="text"
+                        type="number"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -127,7 +123,7 @@
                   Buscar
                 </button>
                 <button
-                  id="btn_salvar"
+                  id="btn_pega"
                   class="btn btn-primary"
                   onclick="pegaLoc()"
                 >
@@ -199,7 +195,7 @@
         <div id="div_table"></div>
       </div>
     </section>
-  </div>
+  </div>  
 </div>
 <canvas id="canvas_dia2" hidden height="1000px" width="1000px"></canvas>
 <canvas id="canvas_dia_watts2" hidden height="1000px" width="1000px"></canvas>

@@ -18,11 +18,11 @@ function chamaPage(path, conteiner) {
 
 function alertas(text = null, title = null) {
   if (!title) {
-    title = "Previsões do Tempo";
+    title = "Meu Sol";
   }
 
   if (!text) {
-    text = "Previsões do Tempo";
+    text = "Meu Sol";
   }
   // $("#modal_msg").modal("show");
   BootstrapDialog.show({
@@ -36,6 +36,30 @@ function alertas(text = null, title = null) {
         },
       },
     ],
+  });
+}
+
+
+const ui = {
+  confirm: async (message) => createConfirm(message)
+}
+
+const createConfirm = (message) => {
+  return new Promise((complete, failed)=>{
+    $('#confirmMessage').text(message)
+
+    $('#confirmYes').off('click');
+    $('#confirmNo').off('click');
+    
+    $('#confirmYes').on('click', ()=> { 
+      $('#confirm').hide();
+      $('#lockscreen').hide();
+      complete(true); 
+    });
+    $('#confirmNo').on('click', ()=> { $('#confirm').hide();$('#lockscreen').hide(); complete(false); });
+    
+    $('#lockscreen').show();
+    $('#confirm').show();
   });
 }
 
@@ -172,6 +196,7 @@ const getOrCreateTooltip = (chart) => {
     tooltipEl.style.transform = "translate(-50%, 0)";
     tooltipEl.style.transition = "all .1s ease";
     tooltipEl.style.width = "250px";
+    tooltipEl.style.zIndex = "9999";
 
     const table = document.createElement("table");
     table.style.margin = "0px";
@@ -199,7 +224,7 @@ const externalTooltipHandler = (context) => {
   if (tooltip.body) {
     var { humidity, temperature } = chart.config._config.adicional;
     var labelx = chart.config._config.labelx;
-    var { dataIndex, label, formattedValue, dataset } = tooltip.dataPoints[0]
+    var { dataIndex, label, formattedValue, dataset } = tooltip.dataPoints[0];
 
     const tableRoot = tooltipEl.querySelector("table");
 
@@ -209,17 +234,17 @@ const externalTooltipHandler = (context) => {
     }
 
     // Add new children
-    var html = ''
-    if(temperature){
+    var html = "";
+    if (temperature) {
       html = `
         <div class="form-group">
           <span>${labelx} ${label}</span><br/>
           <span>${dataset.label} = ${formattedValue}</span><br/>
           <span>Temperatura = ${temperature[dataIndex]} °C</span><br/>
-          <span>Humidade = ${humidity[dataIndex]} %</span>
+          <span>Umidade = ${humidity[dataIndex]} %</span>
         </div>
       `;
-    }else{
+    } else {
       html = `
         <div class="form-group">
           <span>${labelx} ${label}</span><br/>
@@ -237,8 +262,15 @@ const externalTooltipHandler = (context) => {
   tooltipEl.style.left = positionX + tooltip.caretX + "px";
   tooltipEl.style.top = positionY + tooltip.caretY + "px";
   tooltipEl.style.font = tooltip.options.bodyFont.string;
+  tooltipEl.style.zIndex = "9999";
   tooltipEl.style.padding =
     tooltip.options.padding + "px " + tooltip.options.padding + "px";
+};
+randonColor = function() {
+  var r = Math.floor(Math.random() * 255);
+  var g = Math.floor(Math.random() * 255);
+  var b = Math.floor(Math.random() * 255);
+  return "rgb(" + r + "," + g + "," + b + ")";
 };
 
 function graficoDash(
@@ -250,6 +282,7 @@ function graficoDash(
   labely = "",
   type = "line",
   infos = {},
+  backgroundColor=randonColor(),
   responsive = true
 ) {
   return {
@@ -261,8 +294,7 @@ function graficoDash(
       datasets: [
         {
           label: dataSetLabel,
-          backgroundColor: "rgb(54, 162, 235)",
-          borderColor: "rgb(54, 162, 235)",
+          backgroundColor: backgroundColor,
           data: dados,
           fill: false,
         },
@@ -306,4 +338,14 @@ function pegaLoc() {
       });
     }
   );
+}
+function verifica(elm) {
+  elm = $(elm)
+  if(elm.val()){
+    elm.removeClass('is-invalid')
+    elm.addClass('is-valid')
+  }else{
+    elm.removeClass('is-valid')
+    elm.addClass('is-invalid')
+  }
 }

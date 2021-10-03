@@ -123,11 +123,11 @@ class BuscaIrradience(viewsets.ModelViewSet):
 
         dt = pd.DataFrame(tabela)
         dt = dt.rename(columns={
-            0: 'time', 
+            0: 'time',
             1: 'irradiance',
             2: 'temperature',
             3: 'humidity'
-            })
+        })
         dt['energy'] = dt.apply(
             lambda x: CalculadorSolar(
                 x['irradiance'], potencia, perda).diario(), axis=1)
@@ -136,11 +136,11 @@ class BuscaIrradience(viewsets.ModelViewSet):
         dt['custoTotal'] = round(dt['custo'].sum(), 2)
 
         dt2 = dt.rename(columns={
-            'time': 'Dias',
+            'time': 'Dia',
             'irradiance': 'Irradiação',
             'energy': 'Potencial Energético',
             'temperature': 'Temp (°C)',
-            'humidity': 'Humidade Relativa',
+            'humidity': 'Umidade Relativa (%)',
             'total': 'Potencial Energético mensal',
             'custo': 'Crédito (R$)',
             'custoTotal': 'Crédito mensal (R$)',
@@ -161,14 +161,20 @@ class BuscaIrradience(viewsets.ModelViewSet):
             dados.latitude,
             dados.longitude,
             dados.inicio,
+            dados.fim,
             potencia,
             perda)
 
         resposta = {
             'dados': dt.to_dict(),
-            'mes': mes,
+            'mes': dados.inicio.split('-')[1],
+            'mes_fim': dados.fim.split('-')[1],
             'ano': ano,
             'html': html,
+            'inicio': datetime.strptime(dados.inicio, "%Y-%m-%d").strftime("%d/%m/%Y"),
+            'fim': datetime.strptime(dados.fim, "%Y-%m-%d").strftime("%d/%m/%Y"),
+            'dia_inicio': dados.inicio.split('-')[2],
+            'dia_fim': dados.fim.split('-')[2],
             'dadosAnos': dadosAnos
         }
         return Response(resposta)
@@ -230,15 +236,15 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(data)
 
 
-def BuscaDadosAnos(latitude, longitude, data, potencia, perda):
-    date = trataData(data, format=False)
+def BuscaDadosAnos(latitude, longitude, inicio, fim, potencia, perda):
+    date = trataData(inicio, format=False)
     irradience = []
     energy = []
-    for x in range(5):
-        date.somaAno(x)
-        inicio = date.inicio_mes_ano.replace('-', '')
-        fim = date.fim_mes_ano.replace('-', '')
-        base_url = f"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={longitude}&latitude={latitude}&start={inicio}&end={fim}&format=JSON"
+    for x in reversed(range(5)):
+        date.somaAno(x, inicio, fim)
+        inicioLocal = date.inicio_mes_ano
+        fimLocal = date.fim_mes_ano
+        base_url = f"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={longitude}&latitude={latitude}&start={inicioLocal}&end={fimLocal}&format=JSON"
 
         response = requests.get(
             url=base_url,
@@ -259,7 +265,7 @@ def BuscaDadosAnos(latitude, longitude, data, potencia, perda):
                     irradienceData[key], potencia, perda).diario()
                 totalPotencia += valor
 
-        ano = inicio[0:4]
+        ano = inicioLocal[0:4]
         irradience.append({'ano': ano, 'valor': round(total, 2)})
         energy.append({'ano': ano, 'valor': round(totalPotencia, 2)})
 

@@ -8,17 +8,6 @@
 ></script>
 <div id="form-banco">
   <div class="content-wrapper">
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">Previsao do tempo</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
     <section class="content">
       <div class="container-fluid">
         <div class="row">
@@ -33,9 +22,10 @@
                     <div class="form-group">
                       <label>Latidude</label>
                       <input
-                        type="text"
+                        type="number"
                         class="form-control"
                         id="irradiance_latitude"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>
@@ -43,9 +33,10 @@
                     <div class="form-group">
                       <label>Longitude</label>
                       <input
-                        type="text"
+                        type="number"
                         class="form-control"
                         id="irradiance_longitude"
+                        onblur="verifica(this)"
                       />
                     </div>
                   </div>

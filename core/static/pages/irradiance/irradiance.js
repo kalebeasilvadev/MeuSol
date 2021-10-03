@@ -1,4 +1,4 @@
-function busca() {
+async function busca() {
   let latitude = $("#irradiance_latitude").val();
   let longitude = $("#irradiance_longitude").val();
   let inicio = $("#irradiance_inicio").val();
@@ -7,13 +7,27 @@ function busca() {
   let perda = $("#irradiance_perda").val();
   let custo = $("#irradiance_custo").val();
 
+  if(!latitude || !longitude || !inicio || !fim || !potencia || !perda || !custo){
+    verifica($("#irradiance_latitude"))
+    verifica($("#irradiance_longitude"))
+    verifica($("#irradiance_inicio"))
+    verifica($("#irradiance_fim"))
+    verifica($("#irradiance_potencia"))
+    verifica($("#irradiance_perda"))
+    verifica($("#irradiance_custo"))
+    alertas("Preencha os campos.")
+    return;
+  }
+
   const date1 = new Date(inicio);
   const date2 = new Date(fim);
   const diffTime = Math.abs(date2 - date1);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  if(diffDays > 31){
-    alertas("Período maior que 31 dias")
-    return false
+  if (diffDays > 31) {
+    const confirm = await ui.confirm("Periodo maior que 31 dias. Deseja continuar?");
+    if (!confirm) {
+      return false;
+    }
   }
 
   data = http.request({
@@ -35,6 +49,12 @@ function busca() {
     dados = data.data.dados;
     ano = data.data.ano;
     mes = data.data.mes;
+    mes_fim = data.data.mes_fim;
+    inicio = data.data.inicio;
+    fim = data.data.fim;
+    dia_fim = data.data.dia_fim;
+    dia_inicio = data.data.dia_inicio;
+    fim = data.data.fim;
     data = [];
     irradiance = [];
     energy = [];
@@ -48,43 +68,63 @@ function busca() {
       temperature.push(dados.temperature[key]);
       humidity.push(dados.humidity[key]);
     }
-    infos = {'humidity': humidity, 'temperature': temperature}
+    infos = { humidity: humidity, temperature: temperature };
     time = dados.time;
     config_dia = graficoDash(
       data,
-      "Níveis (kW-hr/m^2) ",
+      "Níveis de radiação (kW-hr/m^2) ",
       irradiance,
-      `Níveis de radiação solar ${mes}/${ano}`,
-      "Dia",
-      "Produção diaria",
-      type = "bar",
-      infos = infos,
-    );
-    var ctx = document.getElementById("canvas_dia").getContext("2d");
-    $("#canvas_dia").html("");
-    window.dia = new Chart(ctx, config_dia);
-
-    var ctx = document.getElementById("canvas_dia2").getContext("2d");
-    $("#canvas_dia2").html("");
-    window.dia2 = new Chart(ctx, config_dia);
-
-    config_dia_watts = graficoDash(
-      data,
-      "Energia gerada (kWh) ",
-      energy,
-      `Produção diaria ${mes}/${ano}`,
+      `Níveis de radiação solar ${inicio} - ${fim}`,
       "Dia",
       "Produção diaria",
       (type = "bar"),
-      infos = infos,
+      (infos = infos),
+      backgroundColor = "#8B008B"
     );
 
-    var ctx = document.getElementById("canvas_dia_watts").getContext("2d");
+    if (window.dia instanceof Chart) {
+      window.dia.destroy();
+    }
+    var ctx_dia = document.getElementById("canvas_dia").getContext("2d");
+    $("#canvas_dia").html("");
+    window.dia = new Chart(ctx_dia, config_dia);
+
+    if (window.dia2 instanceof Chart) {
+      window.dia2.destroy();
+    }
+    var ctx_dia2 = document.getElementById("canvas_dia2").getContext("2d");
+    $("#canvas_dia2").html("");
+    window.dia2 = new Chart(ctx_dia2, config_dia);
+
+    config_dia_watts = graficoDash(
+      data,
+      "Energia gerada (kW) ",
+      energy,
+      `Produção diaria ${inicio} - ${fim}`,
+      "Dia",
+      "Produção diaria",
+      (type = "bar"),
+      (infos = infos),
+      backgroundColor = "#4169E1"
+    );
+
+    if (window.dia_watts instanceof Chart) {
+      window.dia_watts.destroy();
+    }
+    var ctx_dia_watts = document
+      .getElementById("canvas_dia_watts")
+      .getContext("2d");
     $("#canvas_dia_watts").html("");
-    window.dia_watts = new Chart(ctx, config_dia_watts);
-    var ctx = document.getElementById("canvas_dia_watts2").getContext("2d");
+    window.dia_watts = new Chart(ctx_dia_watts, config_dia_watts);
+
+    if (window.dia_watts2 instanceof Chart) {
+      window.dia_watts2.destroy();
+    }
+    var ctx_dia_watts2 = document
+      .getElementById("canvas_dia_watts2")
+      .getContext("2d");
     $("#canvas_dia_watts2").html("");
-    window.dia_watts2 = new Chart(ctx, config_dia_watts);
+    window.dia_watts2 = new Chart(ctx_dia_watts2, config_dia_watts);
 
     dataAno = [];
     irradianceAno = [];
@@ -98,39 +138,59 @@ function busca() {
 
     config_ano = graficoDash(
       dataAno,
-      `Produção (kW-hr/m^2)`,
+      `Níveis de radiação (kW-hr/m^2)`,
       irradianceAno,
-      `Níveis de radiação solar ultimos 5 anos para o mes ${mes}`,
+      `Níveis de radiação solar ultimos 5 anos ${dia_inicio}/${mes} - ${dia_fim}/${mes_fim}`,
       "Ano",
       "Produção diaria",
-      (type = "bar")
+      (type = "bar"),
+      (infos = {}),
+      backgroundColor = "#008080"
     );
 
-    var ctx = document.getElementById("canvas_ano").getContext("2d");
+    if (window.anoS instanceof Chart) {
+      window.anoS.destroy();
+    }
     $("#canvas_ano").html("");
-    window.ano = new Chart(ctx, config_ano);
+    var ctx_ano = document.getElementById("canvas_ano").getContext("2d");
+    window.anoS = new Chart(ctx_ano, config_ano);
 
-    var ctx = document.getElementById("canvas_ano2").getContext("2d");
+    if (window.ano2 instanceof Chart) {
+      window.ano2.destroy();
+    }
+    var ctx_ano2 = document.getElementById("canvas_ano2").getContext("2d");
     $("#canvas_ano2").html("");
-    window.ano2 = new Chart(ctx, config_ano);
+    window.ano2 = new Chart(ctx_ano2, config_ano);
 
     config_ano_watts2 = graficoDash(
       dataAno,
       `Produção (KWh)`,
       energyAno,
-      `Produção mensal dos ultimos 5 anos para o mes ${mes}`,
+      `Produção mensal dos ultimos 5 anos ${dia_inicio}/${mes} - ${dia_fim}/${mes_fim}`,
       "Ano",
       "Produção diaria",
-      (type = "bar")
+      (type = "bar"),
+      (infos = {}),
+      backgroundColor = "#008000"
     );
 
-    var ctx = document.getElementById("canvas_ano_watts").getContext("2d");
+    if (window.ano_watts instanceof Chart) {
+      window.ano_watts.destroy();
+    }
+    var ctx_anos_watts = document
+      .getElementById("canvas_ano_watts")
+      .getContext("2d");
     $("#canvas_ano_watts").html("");
-    window.ano_watts = new Chart(ctx, config_ano_watts2);
+    window.ano_watts = new Chart(ctx_anos_watts, config_ano_watts2);
 
-    var ctx = document.getElementById("canvas_ano_watts2").getContext("2d");
+    if (window.ano_watts2 instanceof Chart) {
+      window.ano_watts2.destroy();
+    }
+    var ctx_anos_watts2 = document
+      .getElementById("canvas_ano_watts2")
+      .getContext("2d");
     $("#canvas_ano_watts2").html("");
-    window.ano_watts2 = new Chart(ctx, config_ano_watts2);
+    window.ano_watts2 = new Chart(ctx_anos_watts2, config_ano_watts2);
 
     title = `Dados de Irradiação Solar `;
     $("#table_relatorio").DataTable({

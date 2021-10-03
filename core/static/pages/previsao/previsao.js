@@ -2,6 +2,13 @@ function busca() {
     let latitude = $("#irradiance_latitude").val();
     let longitude = $("#irradiance_longitude").val();
 
+    if(!latitude || !longitude){
+        verifica($("#irradiance_latitude"))
+        verifica($("#irradiance_longitude"))
+        alertas("Preencha os campos.")
+        return;
+      }
+
     data = http.request({
         metodo: "POST",
         path: "api/buscaprevisao/",

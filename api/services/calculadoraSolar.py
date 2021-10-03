@@ -8,11 +8,12 @@ class CalculadorSolar:
             return 'Falta o valor de potencia da placa solar'
 
         self.irradience = float(irradiance)
-        self.potencia = float(potencia)
+        self.potencia = float(potencia) / 1000
         self.perda = float(perda)
 
     def diario(self):
-        return round(self.irradience * self.potencia * (1 - self.perda), 2)
+        return round(self.irradience * self.potencia *
+                     (1 - self.perda), 2)
 
     def diarioUnit(self):
         diario = str(self.diario()).replace('.', ',')
