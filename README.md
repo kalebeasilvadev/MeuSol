@@ -13,19 +13,19 @@ Versao do python 3.7
 # Servidor de aplicação
 
 Aplicação foi feito em :
-    - python
-    - Django
-    - Django Rest Framework
-    - Javascript
-    - Jqueyr
-    - Chart.js
-    - Datatables
-    - Bootstrap
+- python
+- Django
+- Django Rest Framework
+- Javascript
+- Jqueyr
+- Chart.js
+- Datatables
+- Bootstrap
 
 # API de suportes
 
-NasaPower
-Open Weather
+- NasaPower
+- Open Weather
 # Servidor de deploy
 
 Para deploy foi utilizado heroku
