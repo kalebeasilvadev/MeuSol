@@ -13,7 +13,7 @@ Versao do python 3.7
 # Servidor de aplicação
 
 Aplicação foi feito em :
-    - python 
+    - python
     - Django
     - Django Rest Framework
     - Javascript
