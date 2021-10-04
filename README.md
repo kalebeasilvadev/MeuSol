@@ -41,11 +41,11 @@ https://drive.google.com/drive/folders/1xxMIhtMAkt-ctVlv7OP37DYcoiyXwq-t?usp=sha
 
 # Ambient preparation
 Python version 3.7
-  Generating virtual ambient =
-  bat enabling = 
-  library installation = 
-  database generation =
-  server localhost initiation = 
+- Generating virtual ambient = python -m venv env
+- bat enabling = ativaEnv.bat
+- library installation =  pip install -r requirements.txt
+- database generation = python manage.py migrate
+- server localhost initiation = python manage.py runserver 
 
 # Server appliacation
 
