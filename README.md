@@ -37,3 +37,37 @@ https://deploy-meu-sol.herokuapp.com/
 # Apresentação 
 
 https://drive.google.com/drive/folders/1xxMIhtMAkt-ctVlv7OP37DYcoiyXwq-t?usp=sharing
+
+
+# Ambient preparation
+Python version 3.7
+  Generating virtual ambient =
+  bat enabling = 
+  library installation = 
+  database generation =
+  server localhost initiation = 
+
+# Server appliacation
+
+Application made in:
+- python
+- Django
+- Django Rest Framework
+- Javascript
+- Jqueyr
+- Chart.js
+- Datatables
+- Bootstrap
+
+# Support API's
+- NasaPower
+- Open Weather
+
+# Server deployment
+The deployment was mad utilising Heroku service
+
+# Web App Link
+https://deploy-meu-sol.herokuapp.com/
+
+# Presentation
+https://drive.google.com/drive/folders/1xxMIhtMAkt-ctVlv7OP37DYcoiyXwq-t?usp=sharing
